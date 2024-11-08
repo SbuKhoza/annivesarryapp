@@ -1,12 +1,22 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, Image, FlatList, Alert } from 'react-native';
+import { 
+  StyleSheet, 
+  Text, 
+  View, 
+  TouchableOpacity, 
+  TextInput, 
+  Image, 
+  FlatList, 
+  Alert,
+  Dimensions 
+} from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
 
 const AnniversaryScreen = ({ route, navigation }) => {
-  const { savedData = [] } = route.params;
-  const [entries, setEntries] = useState(savedData);
+  // Initialize entries state with savedData from route params
+  const [entries, setEntries] = useState(route.params?.savedData || []);
   const [editIndex, setEditIndex] = useState(null);
   const [editName, setEditName] = useState("");
   const [editSurname, setEditSurname] = useState("");
@@ -43,7 +53,6 @@ const AnniversaryScreen = ({ route, navigation }) => {
       message: editMessage,
     };
     setEntries(updatedEntries);
-    // Update the entries in HomeScreen as well
     navigation.setParams({ savedData: updatedEntries });
     setEditIndex(null);
     alert("Updated Successfully!");
@@ -59,12 +68,9 @@ const AnniversaryScreen = ({ route, navigation }) => {
           text: 'Delete',
           style: 'destructive',
           onPress: () => {
-            const updatedEntries = [...entries];
-            updatedEntries.splice(index, 1);
+            const updatedEntries = entries.filter((_, i) => i !== index);
             setEntries(updatedEntries);
-            // Update the entries in HomeScreen as well
             navigation.setParams({ savedData: updatedEntries });
-            alert("Deleted Successfully!");
           },
         },
       ],
@@ -86,8 +92,8 @@ const AnniversaryScreen = ({ route, navigation }) => {
       quality: 1,
     });
 
-    if (!result.cancelled) {
-      setEditImage(result.uri);
+    if (!result.canceled) { 
+      setEditImage(result.assets[0].uri);
     }
   };
 
@@ -98,7 +104,13 @@ const AnniversaryScreen = ({ route, navigation }) => {
         <Text style={styles.itemDate}>{new Date(item.date).toLocaleDateString()}</Text>
         <Text style={styles.itemMessage}>{item.message}</Text>
         {item.image && (
-          <Image source={{ uri: item.image }} style={styles.itemImage} />
+          <View style={styles.imageContainer}>
+            <Image 
+              source={{ uri: item.image }} 
+              style={styles.itemImage}
+              resizeMode="cover"
+            />
+          </View>
         )}
       </View>
       <View style={styles.itemActions}>
@@ -129,85 +141,95 @@ const AnniversaryScreen = ({ route, navigation }) => {
 
       {editIndex !== null && (
         <View style={styles.editContainer}>
-          <Text style={styles.editTitle}>Edit Entry</Text>
+          <View style={styles.editContent}>
+            <Text style={styles.editTitle}>Edit Entry</Text>
 
-          <View style={styles.editItem}>
-            <Text style={styles.editLabel}>Name:</Text>
-            <TextInput
-              style={styles.editInput}
-              value={editName}
-              onChangeText={setEditName}
-            />
-          </View>
-
-          <View style={styles.editItem}>
-            <Text style={styles.editLabel}>Surname:</Text>
-            <TextInput
-              style={styles.editInput}
-              value={editSurname}
-              onChangeText={setEditSurname}
-            />
-          </View>
-
-          <View style={styles.editItem}>
-            <Text style={styles.editLabel}>Date:</Text>
-            <TouchableOpacity onPress={() => setShow(true)}>
-              <Text>{editDate.toLocaleDateString()}</Text>
-            </TouchableOpacity>
-            {show && (
-              <DateTimePicker
-                testID="dateTimePicker"
-                value={editDate}
-                mode="date"
-                display="default"
-                onChange={(event, selectedDate) => {
-                  const currentDate = selectedDate || editDate;
-                  setShow(false);
-                  setEditDate(currentDate);
-                }}
+            <View style={styles.editItem}>
+              <Text style={styles.editLabel}>Name:</Text>
+              <TextInput
+                style={styles.editInput}
+                value={editName}
+                onChangeText={setEditName}
               />
-            )}
-          </View>
+            </View>
 
-          <View style={styles.editItem}>
-            <Text style={styles.editLabel}>Anniversary:</Text>
-            <SelectList data={data} setSelected={setEditSelected} />
-          </View>
+            <View style={styles.editItem}>
+              <Text style={styles.editLabel}>Surname:</Text>
+              <TextInput
+                style={styles.editInput}
+                value={editSurname}
+                onChangeText={setEditSurname}
+              />
+            </View>
 
-          <View style={styles.editItem}>
-            <Text style={styles.editLabel}>Image:</Text>
-            <TouchableOpacity onPress={handleImagePicker}>
-              {editImage ? (
-                <Image source={{ uri: editImage }} style={styles.editImage} />
-              ) : (
-                <Text>Upload Image</Text>
+            <View style={styles.editItem}>
+              <Text style={styles.editLabel}>Date:</Text>
+              <TouchableOpacity onPress={() => setShow(true)}>
+                <Text>{editDate.toLocaleDateString()}</Text>
+              </TouchableOpacity>
+              {show && (
+                <DateTimePicker
+                  testID="dateTimePicker"
+                  value={editDate}
+                  mode="date"
+                  display="default"
+                  onChange={(event, selectedDate) => {
+                    const currentDate = selectedDate || editDate;
+                    setShow(false);
+                    setEditDate(currentDate);
+                  }}
+                />
               )}
-            </TouchableOpacity>
-          </View>
+            </View>
 
-          <View style={styles.editItem}>
-            <Text style={styles.editLabel}>Message:</Text>
-            <TextInput
-              style={styles.editInput}
-              value={editMessage}
-              onChangeText={setEditMessage}
-              multiline
-            />
-          </View>
+            <View style={styles.editItem}>
+              <Text style={styles.editLabel}>Anniversary:</Text>
+              <SelectList 
+                data={data} 
+                setSelected={setEditSelected}
+                defaultOption={{ key: editSelected, value: editSelected }}
+              />
+            </View>
 
-          <View style={styles.editActions}>
-            <TouchableOpacity
-              style={[styles.actionButton, styles.updateButton]}
-              onPress={handleUpdate}
-            >
-              <Text style={styles.actionButtonText}>Update</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.actionButton, styles.cancelButton]}
-              onPress={() => setEditIndex(null)}
-            >
-              <Text style={styles.actionButtonText}>Cancel</Text>
-            </TouchableOpacity>
+            <View style={styles.editItem}>
+              <Text style={styles.editLabel}>Image:</Text>
+              <TouchableOpacity onPress={handleImagePicker}>
+                {editImage ? (
+                  <Image 
+                    source={{ uri: editImage }} 
+                    style={styles.editImage}
+                    resizeMode="cover"
+                  />
+                ) : (
+                  <Text>Upload Image</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.editItem}>
+              <Text style={styles.editLabel}>Message:</Text>
+              <TextInput
+                style={styles.editInput}
+                value={editMessage}
+                onChangeText={setEditMessage}
+                multiline
+              />
+            </View>
+
+            <View style={styles.editActions}>
+              <TouchableOpacity
+                style={[styles.actionButton, styles.updateButton]}
+                onPress={handleUpdate}
+              >
+                <Text style={styles.actionButtonText}>Update</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.actionButton, styles.cancelButton]}
+                onPress={() => setEditIndex(null)}
+              >
+                <Text style={styles.actionButtonText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       )}
@@ -230,47 +252,66 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 16,
     marginVertical: 8,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   itemContent: {
     flex: 1,
+    marginBottom: 10,
   },
   itemText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 4,
+    marginBottom: 8,
   },
   itemDate: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 4,
+    marginBottom: 8,
   },
   itemMessage: {
     fontSize: 14,
     color: '#333',
+    marginBottom: 8,
+  },
+  imageContainer: {
+    alignItems: 'center',
+    marginTop: 10,
   },
   itemImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 4,
+    width: '100%',
+    height: 200,
+    borderRadius: 8,
   },
   itemActions: {
-    flexDirection: 'column',
-    alignItems: 'flex-end',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginTop: 10,
   },
   actionButton: {
     paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingHorizontal: 16,
     borderRadius: 4,
-    marginVertical: 4,
+    marginLeft: 8,
   },
   editButton: {
     backgroundColor: '#007BFF',
   },
   deleteButton: {
     backgroundColor: '#DC3545',
+  },
+  updateButton: {
+    backgroundColor: '#28A745',
+  },
+  cancelButton: {
+    backgroundColor: '#6C757D',
   },
   actionButtonText: {
     color: '#fff',
@@ -285,43 +326,46 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 16,
+  },
+  editContent: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 16,
+    width: '100%',
+    maxHeight: '90%',
   },
   editTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 16,
+    textAlign: 'center',
   },
   editItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 8,
+    marginBottom: 16,
   },
   editLabel: {
-    width: 100,
+    fontSize: 16,
     fontWeight: 'bold',
+    marginBottom: 8,
   },
   editInput: {
-    flex: 1,
     borderWidth: 1,
     borderColor: '#ccc',
-    padding: 8,
     borderRadius: 4,
+    padding: 8,
+    fontSize: 16,
   },
   editImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 4,
+    width: 200,
+    height: 200,
+    borderRadius: 8,
+    marginTop: 8,
   },
   editActions: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     marginTop: 16,
-  },
-  updateButton: {
-    backgroundColor: '#28A745',
-  },
-  cancelButton: {
-    backgroundColor: '#6C757D',
   },
 });
 
