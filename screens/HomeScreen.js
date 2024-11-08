@@ -4,15 +4,17 @@ import { SelectList } from 'react-native-dropdown-select-list';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ navigation, route }) => {
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
-  const [savedData, setSavedData] = useState(null);
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
   const [selected, setSelected] = useState("");
   const [image, setImage] = useState(null);
   const [message, setMessage] = useState("");
+  
+  // Get existing entries from route params or initialize empty array
+  const existingEntries = route.params?.savedData || [];
 
   const data = [
     { option: '1', value: '' },
@@ -25,29 +27,34 @@ const HomeScreen = ({ navigation }) => {
     setDate(currentDate);
   };
 
-  const handleSave = async () => {
-    const newData = {
+  const handleSave = () => {
+    const newEntry = {
       name,
       surname,
-      date,
+      date: date.toISOString(),
       anniversary: selected,
       image,
       message,
     };
-    setSavedData(newData);
+    
+    // Add new entry to existing entries
+    const updatedEntries = [...existingEntries, newEntry];
+    
     alert("Saved Successfully!");
-    navigation.navigate('Anniversaries', { savedData: newData });
+    // Navigate to AnniversaryScreen with updated entries
+    navigation.navigate('Anniversaries', { savedData: updatedEntries });
+    
+    // Reset form
+    handleAddNew();
   };
 
   const handleImagePicker = async () => {
-    // Request camera roll permissions
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
       alert('Sorry, we need camera roll permissions to upload an image.');
       return;
     }
 
-    // Open image picker
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -61,7 +68,6 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const handleAddNew = () => {
-    // Reset the form fields
     setName("");
     setSurname("");
     setDate(new Date());
@@ -136,7 +142,7 @@ const HomeScreen = ({ navigation }) => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate('Anniversaries', { savedData })}
+          onPress={() => navigation.navigate('Anniversaries', { savedData: existingEntries })}
         >
           <Text style={styles.buttonText}>View</Text>
         </TouchableOpacity>

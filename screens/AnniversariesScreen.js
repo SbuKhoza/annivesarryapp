@@ -5,7 +5,8 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
 
 const AnniversaryScreen = ({ route, navigation }) => {
-  const { savedData } = route.params;
+  const { savedData = [] } = route.params;
+  const [entries, setEntries] = useState(savedData);
   const [editIndex, setEditIndex] = useState(null);
   const [editName, setEditName] = useState("");
   const [editSurname, setEditSurname] = useState("");
@@ -21,26 +22,29 @@ const AnniversaryScreen = ({ route, navigation }) => {
   ];
 
   const handleEdit = (index) => {
+    const entry = entries[index];
     setEditIndex(index);
-    setEditName(savedData[index].name);
-    setEditSurname(savedData[index].surname);
-    setEditDate(new Date(savedData[index].date));
-    setEditSelected(savedData[index].anniversary);
-    setEditImage(savedData[index].image);
-    setEditMessage(savedData[index].message);
+    setEditName(entry.name);
+    setEditSurname(entry.surname);
+    setEditDate(new Date(entry.date));
+    setEditSelected(entry.anniversary);
+    setEditImage(entry.image);
+    setEditMessage(entry.message);
   };
 
   const handleUpdate = () => {
-    const updatedData = [...savedData];
-    updatedData[editIndex] = {
+    const updatedEntries = [...entries];
+    updatedEntries[editIndex] = {
       name: editName,
       surname: editSurname,
-      date: editDate.toISOString(), // Convert Date to ISO string
+      date: editDate.toISOString(),
       anniversary: editSelected,
       image: editImage,
       message: editMessage,
     };
-    setSavedData(updatedData);
+    setEntries(updatedEntries);
+    // Update the entries in HomeScreen as well
+    navigation.setParams({ savedData: updatedEntries });
     setEditIndex(null);
     alert("Updated Successfully!");
   };
@@ -55,9 +59,11 @@ const AnniversaryScreen = ({ route, navigation }) => {
           text: 'Delete',
           style: 'destructive',
           onPress: () => {
-            const updatedData = [...savedData];
-            updatedData.splice(index, 1);
-            setSavedData(updatedData);
+            const updatedEntries = [...entries];
+            updatedEntries.splice(index, 1);
+            setEntries(updatedEntries);
+            // Update the entries in HomeScreen as well
+            navigation.setParams({ savedData: updatedEntries });
             alert("Deleted Successfully!");
           },
         },
@@ -67,14 +73,12 @@ const AnniversaryScreen = ({ route, navigation }) => {
   };
 
   const handleImagePicker = async () => {
-    // Request camera roll permissions
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
       alert('Sorry, we need camera roll permissions to upload an image.');
       return;
     }
 
-    // Open image picker
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -94,8 +98,7 @@ const AnniversaryScreen = ({ route, navigation }) => {
         <Text style={styles.itemDate}>{new Date(item.date).toLocaleDateString()}</Text>
         <Text style={styles.itemMessage}>{item.message}</Text>
         {item.image && (
-          <Image source={{ uri: item.image }} style={styles.itemImage} tintColor="red" />
-          
+          <Image source={{ uri: item.image }} style={styles.itemImage} />
         )}
       </View>
       <View style={styles.itemActions}>
@@ -118,7 +121,7 @@ const AnniversaryScreen = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={savedData}
+        data={entries}
         keyExtractor={(item, index) => index.toString()}
         renderItem={renderItem}
         contentContainerStyle={styles.listContainer}
