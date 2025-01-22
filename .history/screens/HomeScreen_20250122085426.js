@@ -1,33 +1,8 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, TextInput, Image, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, Image } from 'react-native';
 import { SelectList } from 'react-native-dropdown-select-list';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
-
-const CARD_COLORS = [
-  { label: 'Classic White', value: '#ffffff' },
-  { label: 'Soft Pink', value: '#ffd6e0' },
-  { label: 'Mint Green', value: '#d4f0db' },
-  { label: 'Sky Blue', value: '#d4e6f1' },
-  { label: 'Lavender', value: '#e8e6ff' },
-  { label: 'Peach', value: '#ffe5d6' },
-];
-
-const CARD_DECORATIONS = [
-  { label: 'None', value: 'none' },
-  { label: 'Confetti Border', value: 'confetti' },
-  { label: 'Hearts Border', value: 'hearts' },
-  { label: 'Stars Border', value: 'stars' },
-  { label: 'Floral Corner', value: 'floral' },
-];
-
-const TEXT_COLORS = [
-  { label: 'Classic Black', value: '#000000' },
-  { label: 'Navy Blue', value: '#1a237e' },
-  { label: 'Deep Purple', value: '#4a148c' },
-  { label: 'Forest Green', value: '#1b5e20' },
-  { label: 'Burgundy', value: '#880e4f' },
-];
 
 const HomeScreen = ({ navigation, route }) => {
   const [name, setName] = useState("");
@@ -37,9 +12,6 @@ const HomeScreen = ({ navigation, route }) => {
   const [selected, setSelected] = useState("");
   const [image, setImage] = useState(null);
   const [message, setMessage] = useState("");
-  const [cardColor, setCardColor] = useState(CARD_COLORS[0].value);
-  const [decoration, setDecoration] = useState(CARD_DECORATIONS[0].value);
-  const [textColor, setTextColor] = useState(TEXT_COLORS[0].value);
   
   const existingEntries = route.params?.savedData || [];
 
@@ -47,21 +19,6 @@ const HomeScreen = ({ navigation, route }) => {
     { option: '1', value: '' },
     { option: '2', value: 'Birthday' },
   ];
-
-  const getDecorationStyle = () => {
-    switch (decoration) {
-      case 'confetti':
-        return { borderWidth: 8, borderStyle: 'dashed', borderColor: '#FFD700' };
-      case 'hearts':
-        return { borderWidth: 8, borderStyle: 'solid', borderColor: '#FF69B4' };
-      case 'stars':
-        return { borderWidth: 8, borderStyle: 'dotted', borderColor: '#4CAF50' };
-      case 'floral':
-        return { borderWidth: 8, borderRadius: 30, borderColor: '#E91E63' };
-      default:
-        return {};
-    }
-  };
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -77,9 +34,6 @@ const HomeScreen = ({ navigation, route }) => {
       anniversary: selected,
       image,
       message,
-      cardColor,
-      decoration,
-      textColor,
     };
     const updatedEntries = [...existingEntries, newEntry];
     alert("Saved Successfully!");
@@ -113,70 +67,13 @@ const HomeScreen = ({ navigation, route }) => {
     setSelected("");
     setImage(null);
     setMessage("");
-    setCardColor(CARD_COLORS[0].value);
-    setDecoration(CARD_DECORATIONS[0].value);
-    setTextColor(TEXT_COLORS[0].value);
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={[styles.card, { backgroundColor: cardColor }, getDecorationStyle()]}>
-        <View style={styles.customizationSection}>
-          <Text style={styles.sectionTitle}>Card Customization</Text>
-          
-          <Text style={styles.label}>Card Color</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.colorPicker}>
-            {CARD_COLORS.map((color, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[
-                  styles.colorOption,
-                  { backgroundColor: color.value },
-                  cardColor === color.value && styles.selectedColor
-                ]}
-                onPress={() => setCardColor(color.value)}
-              >
-                <Text style={styles.colorOptionLabel}>{color.label}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-
-          <Text style={styles.label}>Card Decoration</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.decorationPicker}>
-            {CARD_DECORATIONS.map((dec, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[
-                  styles.decorationOption,
-                  decoration === dec.value && styles.selectedDecoration
-                ]}
-                onPress={() => setDecoration(dec.value)}
-              >
-                <Text style={styles.decorationOptionLabel}>{dec.label}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-
-          <Text style={styles.label}>Text Color</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.colorPicker}>
-            {TEXT_COLORS.map((color, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[
-                  styles.colorOption,
-                  { backgroundColor: color.value },
-                  textColor === color.value && styles.selectedColor
-                ]}
-                onPress={() => setTextColor(color.value)}
-              >
-                <Text style={[styles.colorOptionLabel, { color: '#ffffff' }]}>{color.label}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
-
+    <View style={styles.container}>
+      <View style={styles.card}>
         <View style={styles.anniversary}>
-          <Text style={[styles.label, { color: textColor }]}>Select Anniversary Type</Text>
+          <Text style={styles.label}>Select Anniversary Type</Text>
           <SelectList 
             data={data} 
             setSelected={setSelected}
@@ -186,12 +83,12 @@ const HomeScreen = ({ navigation, route }) => {
         </View>
 
         <View style={styles.date}>
-          <Text style={[styles.label, { color: textColor }]}>Select Date</Text>
+          <Text style={styles.label}>Select Date</Text>
           <TouchableOpacity 
             style={styles.dateButton} 
             onPress={() => setShow(true)}
           >
-            <Text style={[styles.dateButtonText, { color: textColor }]}>
+            <Text style={styles.dateButtonText}>
               {date.toLocaleDateString()}
             </Text>
           </TouchableOpacity>
@@ -207,16 +104,16 @@ const HomeScreen = ({ navigation, route }) => {
         </View>
 
         <View style={styles.names}>
-          <Text style={[styles.label, { color: textColor }]}>Personal Information</Text>
+          <Text style={styles.label}>Personal Information</Text>
           <TextInput
-            style={[styles.input, { color: textColor }]}
+            style={styles.input}
             placeholder="Enter Name"
             value={name}
             onChangeText={text => setName(text)}
             placeholderTextColor="#666"
           />
           <TextInput
-            style={[styles.input, { color: textColor }]}
+            style={styles.input}
             placeholder="Enter Surname"
             value={surname}
             onChangeText={text => setSurname(text)}
@@ -225,7 +122,7 @@ const HomeScreen = ({ navigation, route }) => {
         </View>
 
         <View style={styles.imageUpload}>
-          <Text style={[styles.label, { color: textColor }]}>Upload Image</Text>
+          <Text style={styles.label}>Upload Image</Text>
           <TouchableOpacity 
             style={styles.imageButton} 
             onPress={handleImagePicker}
@@ -234,7 +131,7 @@ const HomeScreen = ({ navigation, route }) => {
               <Image source={{ uri: image }} style={styles.image} />
             ) : (
               <View style={styles.imagePlaceholder}>
-                <Text style={[styles.imagePlaceholderText, { color: textColor }]}>
+                <Text style={styles.imagePlaceholderText}>
                   Tap to upload image
                 </Text>
               </View>
@@ -243,9 +140,9 @@ const HomeScreen = ({ navigation, route }) => {
         </View>
 
         <View style={styles.message}>
-          <Text style={[styles.label, { color: textColor }]}>Personal Message</Text>
+          <Text style={styles.label}>Personal Message</Text>
           <TextInput
-            style={[styles.messageInput, { color: textColor }]}
+            style={styles.messageInput}
             placeholder="Enter your message here..."
             value={message}
             onChangeText={text => setMessage(text)}
@@ -255,7 +152,7 @@ const HomeScreen = ({ navigation, route }) => {
         </View>
 
         <View style={styles.preview}>
-          <Text style={[styles.previewText, { color: textColor }]}>
+          <Text style={styles.previewText}>
             Happy {selected} {name} {surname}
           </Text>
         </View>
@@ -281,7 +178,7 @@ const HomeScreen = ({ navigation, route }) => {
           </TouchableOpacity>
         </View>
       </View>
-    </ScrollView>
+    </View>
   );
 };
 
@@ -292,6 +189,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   card: {
+    backgroundColor: '#ffffff',
     borderRadius: 15,
     padding: 20,
     shadowColor: '#000',
@@ -302,61 +200,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 5,
-    marginBottom: 20,
-  },
-  customizationSection: {
-    marginBottom: 20,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 15,
-    textAlign: 'center',
-  },
-  colorPicker: {
-    marginBottom: 15,
-  },
-  colorOption: {
-    width: 100,
-    height: 40,
-    marginRight: 10,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-  selectedColor: {
-    borderWidth: 3,
-    borderColor: '#000',
-  },
-  colorOptionLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  decorationPicker: {
-    marginBottom: 15,
-  },
-  decorationOption: {
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    marginRight: 10,
-    borderRadius: 8,
-    backgroundColor: '#f0f0f0',
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-  selectedDecoration: {
-    backgroundColor: '#007AFF',
-  },
-  decorationOptionLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#333',
   },
   label: {
     fontSize: 16,
     fontWeight: '600',
+    color: '#333',
     marginBottom: 8,
   },
   anniversary: {
@@ -385,6 +233,7 @@ const styles = StyleSheet.create({
     borderColor: '#e0e0e0',
   },
   dateButtonText: {
+    color: '#333',
     fontSize: 16,
   },
   names: {
@@ -398,6 +247,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderRadius: 8,
     fontSize: 16,
+    color: '#333',
   },
   imageUpload: {
     marginBottom: 20,
@@ -423,6 +273,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   imagePlaceholderText: {
+    color: '#666',
     fontSize: 16,
   },
   message: {
@@ -437,6 +288,7 @@ const styles = StyleSheet.create({
     height: 100,
     textAlignVertical: 'top',
     fontSize: 16,
+    color: '#333',
   },
   preview: {
     marginBottom: 20,
@@ -448,6 +300,7 @@ const styles = StyleSheet.create({
   previewText: {
     fontSize: 18,
     fontWeight: '600',
+    color: '#333',
   },
   buttonContainer: {
     flexDirection: 'row',

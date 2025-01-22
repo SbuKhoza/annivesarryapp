@@ -285,6 +285,8 @@ const HomeScreen = ({ navigation, route }) => {
   );
 };
 
+/* Previous code remains exactly the same until the styles definition */
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

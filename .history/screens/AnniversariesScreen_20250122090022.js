@@ -288,202 +288,133 @@ const HomeScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f0f2f5',
+    backgroundColor: '#fff',
     padding: 16,
   },
-  card: {
-    borderRadius: 15,
-    padding: 20,
+  listContainer: {
+    paddingVertical: 16,
+  },
+  itemContainer: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    padding: 16,
+    marginVertical: 8,
+    backgroundColor: '#fff',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
     elevation: 5,
-    marginBottom: 20,
   },
-  customizationSection: {
-    marginBottom: 20,
+  itemContent: {
+    flex: 1,
+    marginBottom: 10,
   },
-  sectionTitle: {
-    fontSize: 20,
+  itemText: {
+    fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 15,
-    textAlign: 'center',
-  },
-  colorPicker: {
-    marginBottom: 15,
-  },
-  colorOption: {
-    width: 100,
-    height: 40,
-    marginRight: 10,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-  selectedColor: {
-    borderWidth: 3,
-    borderColor: '#000',
-  },
-  colorOptionLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  decorationPicker: {
-    marginBottom: 15,
-  },
-  decorationOption: {
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    marginRight: 10,
-    borderRadius: 8,
-    backgroundColor: '#f0f0f0',
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-  selectedDecoration: {
-    backgroundColor: '#007AFF',
-  },
-  decorationOptionLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#333',
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
     marginBottom: 8,
   },
-  anniversary: {
-    marginBottom: 20,
+  itemDate: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 8,
   },
-  selectBox: {
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-    borderRadius: 8,
-    backgroundColor: '#f8f9fa',
+  itemMessage: {
+    fontSize: 14,
+    color: '#333',
+    marginBottom: 8,
   },
-  dropdown: {
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-    borderRadius: 8,
-    backgroundColor: '#ffffff',
-  },
-  date: {
-    marginBottom: 20,
-  },
-  dateButton: {
-    backgroundColor: '#f8f9fa',
-    padding: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-  },
-  dateButtonText: {
-    fontSize: 16,
-  },
-  names: {
-    marginBottom: 20,
-  },
-  input: {
-    backgroundColor: '#f8f9fa',
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-    padding: 12,
-    marginBottom: 12,
-    borderRadius: 8,
-    fontSize: 16,
-  },
-  imageUpload: {
-    marginBottom: 20,
+  imageContainer: {
     alignItems: 'center',
+    marginTop: 10,
   },
-  imageButton: {
+  itemImage: {
     width: '100%',
-    aspectRatio: 4/3,
-    backgroundColor: '#f8f9fa',
-    borderRadius: 12,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
+    height: 200,
+    borderRadius: 8,
   },
-  image: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 12,
+  itemActions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginTop: 10,
   },
-  imagePlaceholder: {
-    flex: 1,
+  actionButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 4,
+    marginLeft: 8,
+  },
+  editButton: {
+    backgroundColor: '#007BFF',
+  },
+  deleteButton: {
+    backgroundColor: '#DC3545',
+  },
+  updateButton: {
+    backgroundColor: '#28A745',
+  },
+  cancelButton: {
+    backgroundColor: '#6C757D',
+  },
+  actionButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  editContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  imagePlaceholderText: {
-    fontSize: 16,
-  },
-  message: {
-    marginBottom: 20,
-  },
-  messageInput: {
-    backgroundColor: '#f8f9fa',
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-    padding: 12,
-    borderRadius: 8,
-    height: 100,
-    textAlignVertical: 'top',
-    fontSize: 16,
-  },
-  preview: {
-    marginBottom: 20,
     padding: 16,
-    backgroundColor: '#f8f9fa',
+  },
+  editContent: {
+    backgroundColor: '#fff',
     borderRadius: 8,
-    alignItems: 'center',
+    padding: 16,
+    width: '100%',
+    maxHeight: '90%',
   },
-  previewText: {
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    gap: 10,
-  },
-  button: {
-    flex: 1,
-    minWidth: '30%',
-    padding: 15,
-    borderRadius: 8,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-  },
-  saveButton: {
-    backgroundColor: '#4CAF50',
-  },
-  viewButton: {
-    backgroundColor: '#2196F3',
-  },
-  addButton: {
-    backgroundColor: '#9C27B0',
-  },
-  buttonText: {
-    color: '#ffffff',
-    fontWeight: '600',
-    fontSize: 16,
+  editTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 16,
     textAlign: 'center',
+  },
+  editItem: {
+    marginBottom: 16,
+  },
+  editLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  editInput: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 4,
+    padding: 8,
+    fontSize: 16,
+  },
+  editImage: {
+    width: 200,
+    height: 200,
+    borderRadius: 8,
+    marginTop: 8,
+  },
+  editActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 16,
   },
 });
 
-export default HomeScreen;
+export default AnniversaryScreen;
